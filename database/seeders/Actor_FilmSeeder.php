@@ -5,7 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
-class FilmSeeder extends Seeder
+class Actor_FilmSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,7 +14,7 @@ class FilmSeeder extends Seeder
      */
     public function run()
     {
-        $sql = file_get_contents(database_path() .'/seeders/films.sql');
+        $sql = file_get_contents(database_path() .'/seeders/actor_film.sql');
         DB::statement($sql);
     }
 }

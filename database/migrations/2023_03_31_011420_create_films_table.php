@@ -14,11 +14,11 @@ class CreateFilmsTable extends Migration
     public function up()
     {
         Schema::create('films', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
             $table->char('title',255);
             $table->text('description')->nullable();
             $table->year('release_year')->nullable();
-            $table->unsignedTinyInteger('language_id');
+            $table->unsignedBigInteger('language_id');
             $table->unsignedTinyInteger('original_language_id')->nullable();
             $table->unsignedTinyInteger('rental_duration')->default(3);
             $table->decimal('rental_rate', 4, 2)->default(4.99);
@@ -28,6 +28,7 @@ class CreateFilmsTable extends Migration
             $table->set('special_features',['Trailers','Commentaries','Deleted Scenes','Behind the Scenes'])->nullable();
             $table->dateTime('created_at')->nullable();
 
+            $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');
         });
     }
 
