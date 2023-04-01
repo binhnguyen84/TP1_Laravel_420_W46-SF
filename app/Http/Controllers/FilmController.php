@@ -28,4 +28,16 @@ class FilmController extends Controller
             abort(500,'Erreur du serveur');
         }
     }
+
+    public function store(Request $request)
+    {
+        try {
+             
+            $film = Film::create($request->all());
+            return (new FilmResource($film))->response()->setStatusCode(201);
+
+        } catch (Exception $e) {
+            abort(500,'Erreur du serveur');
+        }   
+    }
 }

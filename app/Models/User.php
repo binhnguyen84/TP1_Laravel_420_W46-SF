@@ -22,9 +22,13 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
-        'email',
+        'id',
         'password',
+        'email',
+        'last_name',
+        'first_name',
+        'role_id',
+        'name',
     ];
 
     /**
@@ -60,8 +64,8 @@ class User extends Authenticatable
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function role(): BelongsTo
+    public function role()
     {
-        return $this->belongsTo(Role::class, 'foreign_key', 'other_key');
+        return $this->belongsTo(Role::class);
     }
 }
