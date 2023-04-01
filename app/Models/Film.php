@@ -17,9 +17,11 @@ class Film extends Model
         'release_year',
         'description',
         'rating',
+        'length',
         'language_id',
         'special_features',
         'image',
+        'created_at',
         
     ];
   

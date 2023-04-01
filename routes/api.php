@@ -18,6 +18,11 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+//Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
 Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films.show');
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
+Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store')
+        ->middleware('auth:sanctum','film.auth:admin');
+
+// User

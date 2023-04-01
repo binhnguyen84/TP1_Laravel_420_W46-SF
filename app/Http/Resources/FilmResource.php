@@ -19,7 +19,7 @@ class FilmResource extends JsonResource
     public function toArray($request):array
     {
         if ($request->routeIs('films.showActor')) {
-            
+
             return[
                 'acteurs' => $this->actors()->get(),
             ];
@@ -35,6 +35,7 @@ class FilmResource extends JsonResource
                 'évaluation' => $this->rating,
                 'caractéristiques spéciales' => $this->special_features,
                 'image'=> $this->image,
+                'créé à' => $this->created_at,
                 'critiques' => $this->when($request->routeIs('films.show'),$this->critics()->get()),
             ];
         }
