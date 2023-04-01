@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->char('last_name', 50);
             $table->char('first_name', 50);
             $table->unsignedBigInteger('role_id');
-            $table->char('rememberToken', 100);
+            $table->rememberToken();
             $table->timestamp('created_at');
             $table->timestamp('updated_at');
 

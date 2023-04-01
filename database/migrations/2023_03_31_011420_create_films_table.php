@@ -16,18 +16,15 @@ class CreateFilmsTable extends Migration
         Schema::create('films', function (Blueprint $table) {
             $table->id();
             $table->char('title',255);
-            $table->text('description')->nullable();
             $table->year('release_year')->nullable();
-            $table->unsignedBigInteger('language_id');
-            $table->unsignedTinyInteger('original_language_id')->nullable();
-            $table->unsignedTinyInteger('rental_duration')->default(3);
-            $table->decimal('rental_rate', 4, 2)->default(4.99);
             $table->unsignedSmallInteger('length')->nullable();
-            $table->decimal('replacement_cost', 5, 2)->default(199.99);
-            $table->enum('rating', ['G','PG', 'PG-13','R','NC-17'])->nullable()->default('G');
-            $table->set('special_features',['Trailers','Commentaries','Deleted Scenes','Behind the Scenes'])->nullable();
-            $table->dateTime('created_at')->nullable();
-
+            $table->text('description')->nullable();
+            $table->char('rating', 5);
+            $table->unsignedBigInteger('language_id');
+            $table->char('special_features', 200);
+            $table->char('image', 40);
+            $table->timestamps();
+            
             $table->foreign('language_id')->references('id')->on('languages')->onDelete('cascade');
         });
     }
