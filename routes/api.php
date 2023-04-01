@@ -24,5 +24,7 @@ Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
 Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store')
         ->middleware('auth:sanctum','film.auth:admin');
+Route::delete('films','App\Http\Controllers\FilmController@destroy')->name('films.destroy')
+        ->middleware('auth:sanctum','film.auth:admin');
 
 // User
