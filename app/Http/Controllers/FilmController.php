@@ -32,6 +32,9 @@ class FilmController extends Controller
     public function store(Request $request)
     {
         try {
+            if (!auth()->user()->tokenCan('modify.films')) {
+                abort(403,'Non autorisé');
+            }
             $film = Film::create($request->all());
             return (new FilmResource($film))->response();
 
