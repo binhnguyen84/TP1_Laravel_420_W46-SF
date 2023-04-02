@@ -25,7 +25,7 @@ class UserSeeder extends Seeder
         $user_admin->email = 'admin1@example.com';
         $user_admin->last_name = 'admin';
         $user_admin->first_name = '1';
-        $user_admin->role_id = $adminRole;
+        $user_admin->role_id = $adminRole;        
         $user_admin ->save();
         
         //create new user as member
@@ -37,6 +37,6 @@ class UserSeeder extends Seeder
         $user_member->first_name = '1';
         $user_member->role_id = $memberRole;
         $user_member ->save();
-        
+
     }
 }
