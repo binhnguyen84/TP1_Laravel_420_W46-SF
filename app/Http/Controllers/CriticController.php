@@ -15,7 +15,7 @@ class CriticController extends Controller
     {
         //try {
             
-            //Auth::check();
+            Auth::check();
             // verify input data
             $validatedData = $request->validate([
                 'user_id' => 'required|integer',
