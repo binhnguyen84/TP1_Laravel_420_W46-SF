@@ -14,9 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//    return $request->user();
+//});
 
 //Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
@@ -30,8 +30,11 @@ Route::middleware('auth:sanctum')->group(function(){
     Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store');
     Route::delete('films/{id}','App\Http\Controllers\FilmController@destroy')->name('films.destroy');
 
-    Route::post('critics','App\Http\Controllers\CriticController@store')->name('critics.store');
     //critic
+    Route::post('critics','App\Http\Controllers\CriticController@store')->name('critics.store');
+
+    //user
+    Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
 });
 
 // create tokens
