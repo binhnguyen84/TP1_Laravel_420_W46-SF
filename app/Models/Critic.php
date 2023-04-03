@@ -11,6 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 class Critic extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'id',
+        'user_id',
+        'film_id',
+        'score',
+        'comment',
+
+    ];
 
     /**
      * Get the film that owns the Critic

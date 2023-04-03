@@ -32,7 +32,7 @@ class FilmController extends Controller
     public function store(Request $request)
     {
         try {
-            if (!auth()->user()->tokenCan('modify.films')) {
+            if (auth()->user()->role->name != 'admin') {
                 abort(403,'Non autorisé');
             }
             $film = Film::create($request->all());
@@ -44,7 +44,7 @@ class FilmController extends Controller
     }
     public function destroy($id){
         try {
-            if (!auth()->user()->tokenCan('modify.films')) {
+            if (auth()->user()->role->name != 'admin') {
                 abort(403,'Non autorisé');
             }
             $film = Film::findOrFail($id);

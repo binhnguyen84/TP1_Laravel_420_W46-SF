@@ -14,6 +14,12 @@ class CriticResource extends JsonResource
      */
     public function toArray($request)
     {
-        return parent::toArray($request);
+        return[
+            "id"=>$this->id,
+            "user id"=>$this->user_id,
+            "film id" => $this->film_id,
+            "score" => $this->score,
+            "comment" => $this->comment,
+        ];
     }
 }

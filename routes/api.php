@@ -24,9 +24,13 @@ Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
 
 //protected routes
+//film
 Route::middleware('auth:sanctum')->group(function(){
     Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store');
     Route::delete('films/{id}','App\Http\Controllers\FilmController@destroy')->name('films.destroy');
+
+    Route::post('critics','App\Http\Controllers\CriticController@store')->name('critics.store');
+    //critic
 });
 
 // create tokens
