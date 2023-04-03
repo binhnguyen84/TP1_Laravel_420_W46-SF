@@ -22,11 +22,16 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index')->middleware('auth:sanctum');
 Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films.show');
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
+Route::get('films/{id}/critics','App\Http\Controllers\CriticController@index',)->name('film.critics.index');
 
 //protected routes
 Route::middleware('auth:sanctum')->group(function(){
+    //film
     Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store');
     Route::delete('films/{id}','App\Http\Controllers\FilmController@destroy')->name('films.destroy');
+
+    //critic
+    Route::post('films/{film_id}/critics/users/{user_id}')->name('film.critic.store');
 });
 
 // create tokens
