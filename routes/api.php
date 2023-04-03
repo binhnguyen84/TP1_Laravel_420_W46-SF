@@ -14,9 +14,6 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-//Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//    return $request->user();
-//});
 
 //Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
@@ -24,15 +21,22 @@ Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
 Route::get('films','App\Http\Controllers\FilmController@search')->name('films.search');
 
-//protected routes
-//film
-Route::middleware('auth:sanctum')->group(function(){
-    Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store');
-    Route::delete('films/{id}','App\Http\Controllers\FilmController@destroy')->name('films.destroy');
+//user
+Route::post('user','App\Http\Controllers\UserController@store')->name('user.store')->middleware('guest');
 
+//protected routes
+Route::middleware('auth:sanctum')->group(function(){
+    
+    Route::middleware('admin')->group(function ()
+    {
+        //film
+        Route::post('films','App\Http\Controllers\FilmController@store')->name('films.store');
+        Route::delete('films/{id}','App\Http\Controllers\FilmController@destroy')->name('films.destroy');
+    });
+    
     //critic
     Route::post('critics','App\Http\Controllers\CriticController@store')->name('critics.store');
-
+    
     //user
     Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
 });

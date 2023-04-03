@@ -32,9 +32,6 @@ class FilmController extends Controller
     public function store(Request $request)
     {
         try {
-            if (auth()->user()->role->name != 'admin') {
-                abort(403,'Non autorisé');
-            }
             $film = Film::create($request->all());
             return (new FilmResource($film))->response();
 
@@ -44,9 +41,6 @@ class FilmController extends Controller
     }
     public function destroy($id){
         try {
-            if (auth()->user()->role->name != 'admin') {
-                abort(403,'Non autorisé');
-            }
             $film = Film::findOrFail($id);
             $film->delete();
         } catch (Exceptions $th) {
