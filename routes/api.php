@@ -19,9 +19,10 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 //Film
-Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index')->middleware('auth:sanctum');
+Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
 Route::get('films/{id}','App\Http\Controllers\FilmController@show')->name('films.show');
 Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name('films.showActor');
+Route::get('films','App\Http\Controllers\FilmController@search')->name('films.search');
 
 //protected routes
 //film
