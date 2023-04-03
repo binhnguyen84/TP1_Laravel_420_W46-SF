@@ -19,7 +19,7 @@ class CriticResource extends JsonResource
             "user id"=>$this->user_id,
             "film id" => $this->film_id,
             "score" => $this->score,
-            "commantaire" => $this->comment,
+            "comment" => $this->comment,
         ];
     }
 }
