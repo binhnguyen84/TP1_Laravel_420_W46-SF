@@ -4,9 +4,8 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use App\Exceptions\UnauthoriedActionsExceptions;
 
-class FilmModification
+class AdminFilm
 {
     /**
      * Handle an incoming request.
@@ -15,14 +14,12 @@ class FilmModification
      * @param  \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse)  $next
      * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
      */
-    public function handle(Request $request, Closure $next,$requiredRole)
+    public function handle(Request $request, Closure $next)
     {
-        if (!$request->user()->role()->hasRole($requiredRole)) {
-            abort(401,"Vous devez vous connecter pour continuer.");
-        }
-        else if($requiredRole != "admin" && $request->method() != "GET") {
+        if ($request->user()->role->name != 'admin') {
             abort(403,"vous devez être administrateur pour le faire.");
         }
+        
         return $next($request);
     }
 }
