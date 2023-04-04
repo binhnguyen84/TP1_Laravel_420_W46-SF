@@ -14,46 +14,31 @@ class UserController extends Controller
 {
     public function store(Request $request)
     {
-        if (!Auth::guest()) {
-            abort(403,'Vous devez vous déconnecter avant de créer un nouveau compte utilisateur');
-        }
-    
-        //verify input data in request
-        try {
-            
-            $validatedData = $request->validate([
+            $request->validate([
                 'last_name' => 'required',
                 'first_name' => 'required',
                 'password' => 'required|min:6',
-                'email' => 'required',
+                'email' => 'required|unique:users,email',
                 'role_id' => 'required|exists:roles,id',
             ]);
-        } catch (\Throwable $th) {
-            abort(400,'requête invalide');
-        }
         
-        $last_name = $validatedData['last_name'];
-        $first_name = $validatedData['first_name'];
-        $password = $validatedData['password'];
-        $email = $validatedData['email'];
-        $role_id = $validatedData['role_id'];
+        $user = User::create($request->all());
 
-        // verify credentials data using Auth::attempt
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
-            abort(409,'Le courriel est déjà exsité.');
+        //create new token
+        if ($user ->role->name == 'admin') {
+            $token = $user->createToken('admin',['films:post','films:delete'])->plainTextToken;
+            
+        }else{
+
+            $token = $user->createToken('member',[''])->plainTextToken;
         }
-
-        //add new user in uers table
-        $user = new User();
-        $user->password = Hash::make($password);
-        $user->last_name = $last_name;
-        $user->first_name = $first_name;
-        $user->email = $email;
-        $user->role_id = $role_id;
-        $user->save();
 
         // return result
-        return (new UserResource($user))->response()->setStatusCode(201);
+        return response()->Json([
+            'message' => 'OK',
+            'utilisateur' => $user,
+            'token' => $token
+        ],201);
     }
 
     public function show()
@@ -112,12 +97,12 @@ class UserController extends Controller
         $userToUpDate ->tokens()->delete();
         
         //generate new token
-        $token = $userToUpDate ->creataToken('authToken')->plainTextToken;
+        $token = $userToUpDate ->createToken('authToken')->plainTextToken;
         
         return response()->Json([
             'message' => 'OK',
             'utilisateur' => $userToUpdate,
             'token' => $token
-        ]);
+        ],201);
     }
 }
