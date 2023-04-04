@@ -32,27 +32,48 @@ class FilmController extends Controller
     public function store(Request $request)
     {
         try {
-            if (auth()->user()->role->name != 'admin') {
-                abort(403,'Non autorisé');
-            }
             $film = Film::create($request->all());
             return (new FilmResource($film))->response();
 
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             abort(500,'Erreur du serveur');
         }   
     }
     public function destroy($id){
         try {
-            if (auth()->user()->role->name != 'admin') {
-                abort(403,'Non autorisé');
-            }
             $film = Film::findOrFail($id);
             $film->delete();
         } catch (Exceptions $th) {
             return response()->setStatusCode(500);
         }
         return response()->json(['message'=>'film was deleted'])->setStatusCode(204);
+    }
+
+    public function search(Request $request)
+    {
+        $keyword = $request->input('keyword');
+        $rating = $request->input('rating');
+        $max_length = $request->input('max_length');
+
+        $films = Film::query();
+
+        if ($keyword) {
+            $films->where('title','LIKE','%'.$keyword.'%')
+                    ->orWhere('description','LIKE','%'.$keyword.'%');
+        }
+        if ($rating) {
+            $films->where('rating','LIKE','%'.$rating.'%');
+        }
+        if ($max_length) {
+            $films->where('length','<=','$max_lenth');
+        }
+
+        $films = $films->paginate(20);
+        if ($films->isEmpty()) {
+            abort(404,'Aucun film trouvé');
+        }
+
+        return FilmResource::collection($films)->response()->setStatusCode(200);
     }
   
 }
