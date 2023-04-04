@@ -69,8 +69,6 @@ class UserController extends Controller
                 'first_name' => 'required',
                 'password' => 'required|min:6',
                 'role_id' => 'required|exists:roles,id',
-                //'new_password'=> 'nullable',
-                //'email' => 'required',
             ]);
             
         } catch (\Throwable $th) {
@@ -96,12 +94,18 @@ class UserController extends Controller
         //Revoke user tokens
         $userToUpDate ->tokens()->delete();
         
-        //generate new token
-        $token = $userToUpDate ->createToken('authToken')->plainTextToken;
-        
+        if ($user ->role->name == 'admin') {
+            $token = $user->createToken('admin',['films:post','films:delete'])->plainTextToken;
+            
+        }else{
+
+            $token = $user->createToken('member',[''])->plainTextToken;
+        }
+
+        // return result
         return response()->Json([
             'message' => 'OK',
-            'utilisateur' => $userToUpdate,
+            'utilisateur' => $user,
             'token' => $token
         ],201);
     }
