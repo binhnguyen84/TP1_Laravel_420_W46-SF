@@ -39,6 +39,7 @@ Route::middleware('auth:sanctum')->group(function(){
     
     //user
     Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
+    Route::patch('user','App\Http\Controllers\UserController@edit')->name('user.edit');
 });
 
 // create tokens

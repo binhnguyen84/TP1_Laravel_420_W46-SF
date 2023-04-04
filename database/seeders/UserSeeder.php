@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Database\Seeder;
 use App\Models\Role;
 use App\Models\User;
+
 class UserSeeder extends Seeder
 {
     /**
@@ -26,8 +27,11 @@ class UserSeeder extends Seeder
         $user_admin->last_name = 'admin';
         $user_admin->first_name = '1';
         $user_admin->role_id = $adminRole;        
-        $user_admin ->save();
-        
+        $user_admin->save();
+
+        //generate token for admin
+        $admin_token = $user_admin->createToken('adminToken',['admin'])->plainTextToken;
+
         //create new user as member
         $user_member = new User();
         $user_member->id = 2;
@@ -36,7 +40,10 @@ class UserSeeder extends Seeder
         $user_member->last_name = 'member';
         $user_member->first_name = '1';
         $user_member->role_id = $memberRole;
-        $user_member ->save();
+        $user_member->save();
+
+         //generate token for member
+         $member_token = $user_member->createToken('memberToken',['member'])->plainTextToken;
 
     }
 }
