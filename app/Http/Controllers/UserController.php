@@ -38,11 +38,7 @@ class UserController extends Controller
         $email = $validatedData['email'];
         $role_id = $validatedData['role_id'];
 
-        // verify credentials data using Auth::attempt
-        if (Auth::attempt(['email' => $email, 'password' => $password])) {
-            abort(409,'Le courriel est déjà exsité.');
-        }
-
+        
         //add new user in uers table
         $user = new User();
         $user->password = Hash::make($password);
@@ -52,8 +48,15 @@ class UserController extends Controller
         $user->role_id = $role_id;
         $user->save();
 
+        //create new token
+        $token = $user->createToken('authToken')->plainTextToken;
         // return result
-        return (new UserResource($user))->response()->setStatusCode(201);
+        
+        return response()->Json([
+            'message' => 'OK',
+            'utilisateur' => $userToUpdate,
+            'token' => $token
+        ],201);
     }
 
     public function show()
@@ -112,12 +115,12 @@ class UserController extends Controller
         $userToUpDate ->tokens()->delete();
         
         //generate new token
-        $token = $userToUpDate ->creataToken('authToken')->plainTextToken;
+        $token = $userToUpDate ->createToken('authToken')->plainTextToken;
         
         return response()->Json([
             'message' => 'OK',
             'utilisateur' => $userToUpdate,
             'token' => $token
-        ]);
+        ],201);
     }
 }
