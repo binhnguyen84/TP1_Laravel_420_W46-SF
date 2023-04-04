@@ -26,11 +26,11 @@ class UserController extends Controller
 
         //create new token
         if ($user ->role->name == 'admin') {
-            $token = $user->createToken('authToken',['films:post','films:delete'])->plainTextToken;
+            $token = $user->createToken('admin',['films:post','films:delete'])->plainTextToken;
             
         }else{
 
-            $token = $user->createToken('authToken')->plainTextToken;
+            $token = $user->createToken('member',[''])->plainTextToken;
         }
 
         // return result
