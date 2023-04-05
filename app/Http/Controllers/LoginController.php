@@ -18,23 +18,34 @@ class LoginController extends Controller
             'password' => 'required',
         ]);
 
+
         // Attempt to authenticate the user
         $verify = Auth::attempt(['email' => $request->email, 'password' => $request->password]);
         
         if (!$verify) {
-            abort(401, 'courriel ou mots de pass est incorrect');
+            abort(401, 'L\'adresse e-mail ou les mots de passe sont incorrects');
         }
 
-        $user = User::where('email', $request->email)->first();
-        Auth::login($user);
+        $user = $request->user();
+        
+        //delect old login_tokens
+        $user->tokens()->where('name','login_token')->delete();
 
-        // Generate an API token for the user using Sanctum
-        $token = $user->createToken('api_token')->plainTextToken;
-
+        // Generate an API token for the user using Sanctum 
+        $token = $user->createToken('login_token');
+        
         //Return the user data and token in the response
         return response()->json([
             'user' => New UserResource($user),
-            'token' => $token,
-        ]);
+            'token' => $token->plainTextToken,
+        ],200);
+    }
+
+    public function logout(Request $request)
+    {
+        $user = $request->user();
+        $user->currentAccessToken()->delete();
+
+        return response('Se dèconnecté avec succès.',200);
     }
 }
