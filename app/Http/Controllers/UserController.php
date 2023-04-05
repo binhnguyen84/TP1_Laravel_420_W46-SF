@@ -3,11 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\UserResource;
+use Illuminate\Routing\Controller;
 
 
 class UserController extends Controller
@@ -76,19 +77,11 @@ class UserController extends Controller
         ]);
 
         // if request a change of password
-        if ($request->has('old_password') && $request->has('new_password')) {
-            
-            $newPassword = $request->input('new_password');
-            $oldPassword = $request->input('old_password');
-            $email = $userToUpDate->email;
-            if(!Auth::attempt(['email' =>$email,'password' => $oldPassword])){
-                abort(403,'Non authorisé');
-            }
+        if ($request->has('new_password')) {
             $userToUpDate->password = bcrypt($newPassword);
             $userToUpDate -> save();
         }
 
-                
         //Revoke user tokens
         $userToUpDate ->tokens()->delete();
         
