@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+//Login
+Route::post('login','App\Http\Controllers\LoginController@login')->name ('user.login')->middleware('guest');
 
 //Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
@@ -22,7 +23,7 @@ Route::get('films/{id}/actors','App\Http\Controllers\FilmController@show')->name
 Route::get('films','App\Http\Controllers\FilmController@search')->name('films.search');
 
 //user
-Route::post('user','App\Http\Controllers\UserController@store')->name('user.store')->middleware('guest');
+Route::post('user','App\Http\Controllers\UserController@store')->name('user.store');
 
 //protected routes
 Route::middleware('auth:sanctum')->group(function(){
@@ -40,6 +41,9 @@ Route::middleware('auth:sanctum')->group(function(){
     //user
     Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
     Route::patch('user','App\Http\Controllers\UserController@edit')->name('user.edit');
+
+    //logout
+    Route::post('logout','App\Http\Controllers\LoginController@logout')->name('user.logout');
 });
 
 // create tokens
