@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
+//Login
+Route::post('login','App\Http\Controllers\LoginController@login')->name ('user.login');
 
 //Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
