@@ -16,8 +16,8 @@ class AdminFilm
      */
     public function handle(Request $request, Closure $next)
     {
-        if ($request->user()->role->name != 'admin') {
-            abort(403,"vous devez être administrateur pour le faire.");
+        if ($request->user()->role->name != 'admin'||!$request->user()->tokenCan('film::post','film::delete')) {
+            abort(403,"Non Authorisé");
         }
         
         return $next($request);

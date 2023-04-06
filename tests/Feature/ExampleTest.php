@@ -12,10 +12,23 @@ class ExampleTest extends TestCase
      *
      * @return void
      */
-    public function test_example()
+    public function test_get_user()
     {
-        $response = $this->get('/');
+        //Create a user
+        $user = User::factory()-create();
+        
+        // Authenticate the user using Sanctum
+        Sanctum::actingAs($user);
 
-        $response->assertStatus(200);
+        // Make an authenticated request
+        $response = $this->get('/api/user');
+
+        // Assert that the request was successful and returned the expected user data
+        $response->assertOk();
+        $response->assertJson([
+            'id' => $user->id,
+            'name' => $user->name,
+            'email' => $user->email,
+        ]);
     }
 }

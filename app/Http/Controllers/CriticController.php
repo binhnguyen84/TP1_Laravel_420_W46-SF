@@ -11,35 +11,16 @@ use Illuminate\Support\Facades\Auth;
 class CriticController extends Controller
 {
     
-    public function store(Request $request)
+    public function store(Request $request,$film_id)
     {
-        //try {
-            
-            Auth::check();
             // verify input data
-            $validatedData = $request->validate([
-                'user_id' => 'required|integer',
-                'film_id' => 'required|integer',
+            $request->validate([
                 'comment' =>  'required|',
+                'score'=>'integer|min:1|max:5',
             ]);
+            //get user id
+            $user_id = Auth::id();
 
-            // get important data from validated data
-            $film_id = $validatedData['film_id'];
-            $user_id = $validatedData['user_id'];
-            $comment = $validatedData['comment'];
-            
-            // verify user_id in request must be the same as the id of user sending request
-            if ($user_id != Auth::id()) {
-                abort(403,'Non authorisé');
-            }
-
-            // verify if film exists
-            //try {
-            //    $film = Film::findOrFail($film_id);
-            //} catch (ModelNotFoundException $e) {
-            //    abort(404, 'Film non trouvé');
-            //}
-            
             // Check if a critic for this user and film already exists
             $existingCritic= Critic::select('comment')
                 ->where("film_id",$film_id)
@@ -53,14 +34,15 @@ class CriticController extends Controller
             $critic = new Critic;
             $critic->user_id = $user_id;
             $critic->film_id = $film_id;
-            $critic->comment = $comment;
+            $critic->comment = $request->comment;
+            if ($request->has('score')) {
+                $critic->score = $request->score;
+            }
             $critic->save();
 
             //return new critic resource
             return (new CriticResource($critic))->response()->setStatusCode(201);
-        //} catch (\Throwable $th) {
-        //    abort(500,'Erreur du serveur');
-        //}
+        
         
     }
 }

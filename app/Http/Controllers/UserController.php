@@ -3,58 +3,41 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\UserResource;
+use Illuminate\Routing\Controller;
 
 
 class UserController extends Controller
 {
     public function store(Request $request)
     {
-        if (!Auth::guest()) {
-            abort(403,'Vous devez vous déconnecter avant de créer un nouveau compte utilisateur');
-        }
-    
-        //verify input data in request
-        try {
-            
-            $validatedData = $request->validate([
+            $request->validate([
                 'last_name' => 'required',
                 'first_name' => 'required',
                 'password' => 'required|min:6',
-                'email' => 'required',
+                'email' => 'required|unique:users,email',
                 'role_id' => 'required|exists:roles,id',
             ]);
-        } catch (\Throwable $th) {
-            abort(400,'requête invalide');
-        }
         
-        $last_name = $validatedData['last_name'];
-        $first_name = $validatedData['first_name'];
-        $password = $validatedData['password'];
-        $email = $validatedData['email'];
-        $role_id = $validatedData['role_id'];
-
-        
-        //add new user in uers table
-        $user = new User();
-        $user->password = Hash::make($password);
-        $user->last_name = $last_name;
-        $user->first_name = $first_name;
-        $user->email = $email;
-        $user->role_id = $role_id;
-        $user->save();
+        $user = User::create($request->all());
 
         //create new token
-        $token = $user->createToken('authToken')->plainTextToken;
+        if ($user ->role->name == 'admin') {
+            $token = $user->createToken('admin',['films:post','films:delete'])->plainTextToken;
+            
+        }else{
+
+            $token = $user->createToken('member',[''])->plainTextToken;
+        }
+
         // return result
-        
         return response()->Json([
             'message' => 'OK',
-            'utilisateur' => $userToUpdate,
+            'utilisateur' => $user,
             'token' => $token
         ],201);
     }
@@ -64,63 +47,77 @@ class UserController extends Controller
         if (!Auth::check()) {
             abort(401,'Interdit');
         } 
-        return Auth::user();  
+        return response(Auth::user(),200);  
     }
 
     public function edit(Request $request)
     {
-        if (!Auth::check()) {
-            abort(401,'Vous devez vous déconnecter avant de modifier votre compte utilisateur');
-        }
-        
-        //get the authenticated userid
-        $id = Auth::id();
-
-        //get the user to be updated
-        $userToUpDate = User::findOrFail($id);
+       
+        $userToUpDate = Auth::user();
 
         //verify input data in request
-        try {
-            
-            $validatedData = $request->validate([
-                'last_name' => 'required',
-                'first_name' => 'required',
-                'password' => 'required|min:6',
-                'role_id' => 'required|exists:roles,id',
-                //'new_password'=> 'nullable',
-                //'email' => 'required',
-            ]);
-            
-        } catch (\Throwable $th) {
-            abort(400,'requête invalide');
-        }
+        $request->validate([
+            'last_name' => 'required',
+            'first_name' => 'required',
+            'role_id' => 'required|exists:roles,id',
+        ]);     
         
         //get input data
-        $last_name = $validatedData['last_name'];
-        $first_name = $validatedData['first_name'];
-        $password = $validatedData['password'];
-        $role_id = $validatedData['role_id'];
-
-          // verify credentials data using Auth::attempt
-        if (!Auth::attempt(['email' => $userToUpDate->email, 'password' => $password])) {
-            abort(403,'Non Authorisé');
-        }
-
-        $userToUpdate->fill([
+        $last_name = $request->input('last_name');
+        $first_name = $request->input('first_name');
+        $role_id = $request->input('role_id');
+        
+        $userToUpDate->fill([
             'last_name' => $last_name,
             'first_name'=> $first_name,
             'role_id'=> $role_id
         ]);
+
+        // if request a change of password
+        if ($request->has('new_password')) {
+            $userToUpDate->password = bcrypt($newPassword);
+            $userToUpDate -> save();
+        }
+
         //Revoke user tokens
         $userToUpDate ->tokens()->delete();
         
-        //generate new token
-        $token = $userToUpDate ->createToken('authToken')->plainTextToken;
-        
+        if ($userToUpDate ->role->name == 'admin') {
+            $token = $userToUpDate->createToken('admin',['films:post','films:delete'])->plainTextToken;
+            
+        }else{
+
+            $token = $userToUpDate->createToken('member',[''])->plainTextToken;
+        }
+
+        // return result
         return response()->Json([
             'message' => 'OK',
-            'utilisateur' => $userToUpdate,
+            'utilisateur' => $userToUpDate,
             'token' => $token
         ],201);
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'oldPassword'=>'required',
+            'newPassword'=>'required',
+        ]);
+
+        $user = Auth::user();
+        $email = $user->email;
+        $storedPassword = $user->password;
+        $oldPassword = $request -> oldPassword;
+        $newPassword = $request -> new_password;
+
+       //authenticate = Auth::attempt(['email' => $email, 'password' => $oldPassword]);
+       $authenticate = Hash::check($oldPassword, $storedPassword);
+        if (!$authenticate) {
+            abort(403,'Non Authorisé');
+        }
+        $user ->password = Hash::make($newPassword);
+        $user -> save();
+
+        return response('Le mot de passe a été modifié avec succès',201);
     }
 }
