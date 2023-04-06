@@ -36,7 +36,7 @@ Route::middleware('auth:sanctum')->group(function(){
     });
     
     //critic
-    Route::post('critics','App\Http\Controllers\CriticController@store')->name('critics.store');
+    Route::post('films/{id}/critics','App\Http\Controllers\CriticController@store')->name('films/id/critics.store');
     
     //user
     Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
