@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 //Login
-Route::post('login','App\Http\Controllers\LoginController@login')->name ('user.login')->middleware('guest');
+Route::post('users/login','App\Http\Controllers\LoginController@login')->name ('users.login')->middleware('guest');
 
 //Film
 Route::get('films', 'App\Http\Controllers\FilmController@index')->name('films.index');
@@ -41,9 +41,10 @@ Route::middleware('auth:sanctum')->group(function(){
     //user
     Route::get('user', 'App\Http\Controllers\UserController@show')->name('user.show');
     Route::patch('user','App\Http\Controllers\UserController@edit')->name('user.edit');
+    Route::patch('user/updatePassword','App\Http\Controllers\UserController@updatePassword')->name('user.updatePassword');
 
     //logout
-    Route::post('logout','App\Http\Controllers\LoginController@logout')->name('user.logout');
+    Route::post('users/logout','App\Http\Controllers\LoginController@logout')->name('users.logout');
 });
 
 // create tokens

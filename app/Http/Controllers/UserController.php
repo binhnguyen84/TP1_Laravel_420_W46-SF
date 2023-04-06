@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Role;
 use App\Http\Resources\UserResource;
@@ -47,15 +47,12 @@ class UserController extends Controller
         if (!Auth::check()) {
             abort(401,'Interdit');
         } 
-        return Auth::user();  
+        return response(Auth::user(),200);  
     }
 
     public function edit(Request $request)
     {
-        if (!Auth::check()) {
-            abort(401,'Vous devez vous déconnecter avant de modifier votre compte utilisateur');
-        }
-        
+       
         $userToUpDate = Auth::user();
 
         //verify input data in request
@@ -99,5 +96,28 @@ class UserController extends Controller
             'utilisateur' => $userToUpDate,
             'token' => $token
         ],201);
+    }
+    public function updatePassword(Request $request)
+    {
+        $request->validate([
+            'oldPassword'=>'required',
+            'newPassword'=>'required',
+        ]);
+
+        $user = Auth::user();
+        $email = $user->email;
+        $storedPassword = $user->password;
+        $oldPassword = $request -> oldPassword;
+        $newPassword = $request -> new_password;
+
+       //authenticate = Auth::attempt(['email' => $email, 'password' => $oldPassword]);
+       $authenticate = Hash::check($oldPassword, $storedPassword);
+        if (!$authenticate) {
+            abort(403,'Non Authorisé');
+        }
+        $user ->password = Hash::make($newPassword);
+        $user -> save();
+
+        return response('Le mot de passe a été modifié avec succès',201);
     }
 }

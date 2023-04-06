@@ -12,6 +12,12 @@ class LoginController extends Controller
 {
     public function login(Request $request)
     {
+        if (Auth::check()) {
+            return response('Vous étiez déjà connecté',200)->json([
+                "user"=>new UserResource($user)
+            ]);
+        }
+
         // Validate the request data
         $request->validate([
             'email' => 'required|email',
